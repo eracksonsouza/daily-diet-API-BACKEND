@@ -1,3 +1,6 @@
-import { config } from "./src/database";
+import type { Knex } from "knex";
+import { config } from "./src/database.js";
 
-export default config;
+const knexConfig: Knex.Config = config;
+
+export default knexConfig;
