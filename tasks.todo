@@ -9,6 +9,9 @@
 - [x] Criar migração para tabela de refeições
 - [x] Configurar TypeScript
 - [x] Configurar scripts de desenvolvimento
+- [x] Instalar Zod para validação
+- [x] Criar estrutura de rotas (src/routes/diet.ts)
+- [x] Registrar rotas no servidor
 
 ### Modelo de Dados
 - [x] Tabela users com (id, name, email, session_id, created_at)
@@ -18,41 +21,41 @@
 ## 📋 Requisitos Funcionais (RF)
 
 ### Usuários
-- [ ] RF01: Criar um novo usuário (POST /users)
-  - [ ] Validar dados de entrada (nome, email)
-  - [ ] Gerar UUID único
-  - [ ] Gerar session_id para cookies
-  - [ ] Retornar dados do usuário criado
+- [x] RF01: Criar um novo usuário (POST /users)
+  - [x] Validar dados de entrada (nome, email)
+  - [x] Gerar UUID único
+  - [x] Gerar session_id para cookies
+  - [x] Retornar dados do usuário criado
 
-- [ ] RF02: Identificar usuário entre requisições
-  - [ ] Implementar middleware de autenticação via cookies
-  - [ ] Validar session_id em cada requisição protegida
-  - [ ] Retornar erro 401 se não autenticado
+- [x] RF02: Identificar usuário entre requisições
+  - [x] Implementar middleware de autenticação via cookies
+  - [x] Validar session_id em cada requisição protegida
+  - [x] Retornar erro 401 se não autenticado
 
 ### Refeições
-- [ ] RF03: Registrar uma refeição (POST /meals)
-  - [ ] Validar dados: nome, descrição, data/hora, is_on_diet
-  - [ ] Associar refeição ao usuário autenticado
-  - [ ] Retornar refeição criada
+- [x] RF03: Registrar uma refeição (POST /meals)
+  - [x] Validar dados: nome, descrição, data/hora, is_on_diet
+  - [x] Associar refeição ao usuário autenticado
+  - [x] Retornar refeição criada
 
-- [ ] RF04: Editar uma refeição (PUT /meals/:id)
-  - [ ] Permitir alterar: nome, descrição, data/hora, is_on_diet
+- [ x ] RF04: Editar uma refeição (PUT /meals/:id)
+  - [ x ] Permitir alterar: nome, descrição, data/hora, is_on_diet
+  - [ x ] Verificar se refeição pertence ao usuário
+  - [x ] Retornar erro 404 se não encontrada
+  - [ ] Retornar erro 403 se não autorizado
+
+- [ x ] RF05: Apagar uma refeição (DELETE /meals/:id)
   - [ ] Verificar se refeição pertence ao usuário
   - [ ] Retornar erro 404 se não encontrada
   - [ ] Retornar erro 403 se não autorizado
 
-- [ ] RF05: Apagar uma refeição (DELETE /meals/:id)
-  - [ ] Verificar se refeição pertence ao usuário
-  - [ ] Retornar erro 404 se não encontrada
-  - [ ] Retornar erro 403 se não autorizado
-
-- [ ] RF06: Listar todas as refeições do usuário (GET /meals)
-  - [ ] Retornar apenas refeições do usuário autenticado
-  - [ ] Ordenar por data/hora (mais recente primeiro)
+- [x] RF06: Listar todas as refeições do usuário (GET /meals)
+  - [x] Retornar apenas refeições do usuário autenticado
+  - [x] Ordenar por data/hora (mais recente primeiro)
 
 - [ ] RF07: Visualizar uma única refeição (GET /meals/:id)
-  - [ ] Verificar se refeição pertence ao usuário
-  - [ ] Retornar erro 404 se não encontrada
+  - [x  ] Verificar se refeição pertence ao usuário
+  - [ x ] Retornar erro 404 se não encontrada
   - [ ] Retornar erro 403 se não autorizado
 
 ### Métricas
@@ -65,10 +68,10 @@
 ## 🔒 Requisitos Não-Funcionais (RNF)
 
 ### Segurança
-- [ ] RNF01: Autenticação via cookies (session_id)
-- [ ] RNF02: Isolamento de dados por usuário
+- [x] RNF01: Autenticação via cookies (session_id)
+- [x] RNF02: Isolamento de dados por usuário
 - [ ] RNF03: Validação de propriedade dos recursos (refeições)
-- [ ] RNF04: Email único por usuário
+- [x] RNF04: Email único por usuário
 
 ### Performance
 - [ ] RNF05: Usar índices no banco (session_id, user_id)
@@ -81,21 +84,44 @@
 - [ ] RNF10: Validar formato de email
 
 ### Código
-- [ ] RNF11: Organizar código em rotas separadas
-- [ ] RNF12: Criar middlewares reutilizáveis
-- [ ] RNF13: Tipagem completa com TypeScript
+- [x] RNF11: Organizar código em rotas separadas
+- [x] RNF12: Criar middlewares reutilizáveis
+- [x] RNF13: Tipagem completa com TypeScript
 - [ ] RNF14: Tratamento de erros centralizado
 
 ## 🎯 Próximos Passos Sugeridos
 
-1. [ ] Implementar validação com Zod
-2. [ ] Criar middleware de autenticação
-3. [ ] Implementar rotas de usuários
-4. [ ] Implementar rotas de refeições (CRUD)
-5. [ ] Implementar rota de métricas
-6. [ ] Adicionar tratamento de erros
-7. [ ] Testar todas as rotas
-8. [ ] Documentar API (opcional: Swagger)
+### 🔥 PRIORIDADE ALTA (Começar por aqui)
+1. [x] Criar schemas de validação com Zod
+   - [x] Schema para criar usuário (CreateUserSchema)
+   - [x] Schema para criar refeição (CreateMealSchema)
+   - [ x  ] Schema para atualizar refeição (UpdateMealSchema)
+   - [ ] Schema para parâmetros de rota (IdParamSchema)
+
+2. [x] Implementar rotas de usuários (src/routes/users.ts)
+   - [x] POST /users - Criar usuário
+   - [x] Gerar session_id e configurar cookie
+
+3. [x] Criar middleware de autenticação
+   - [x] Verificar session_id nos cookies
+   - [x] Buscar usuário no banco
+   - [x] Adicionar user_id ao request
+
+4. [ ] Implementar CRUD de refeições (src/routes/meals.ts)
+   - [ ] POST /meals - Criar refeição
+   - [ ] GET /meals - Listar refeições do usuário
+   - [ ] GET /meals/:id - Buscar uma refeição
+   - [ ] PUT /meals/:id - Atualizar refeição
+   - [ ] DELETE /meals/:id - Deletar refeição
+
+5. [ ] Implementar rota de métricas (src/routes/metrics.ts)
+   - [ ] GET /metrics - Retornar estatísticas do usuário
+
+### 🔧 MELHORIAS
+6. [x] Adicionar @fastify/cookie para gerenciar cookies
+7. [ ] Adicionar tratamento de erros global
+8. [ ] Testar todas as rotas manualmente
+9. [ ] Documentar API (opcional: Swagger)
 
 ## 📝 Regras de Negócio
 
