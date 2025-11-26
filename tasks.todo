@@ -1,0 +1,105 @@
+# Daily Diet API - TODO List
+
+## ✅ Feito
+
+### Infraestrutura
+- [x] Configurar Fastify
+- [x] Configurar Knex com SQLite
+- [x] Criar migração para tabela de usuários
+- [x] Criar migração para tabela de refeições
+- [x] Configurar TypeScript
+- [x] Configurar scripts de desenvolvimento
+
+### Modelo de Dados
+- [x] Tabela users com (id, name, email, session_id, created_at)
+- [x] Tabela meals com (id, user_id, name, description, date_time, is_on_diet, created_at)
+- [x] Relacionamento entre users e meals (CASCADE)
+
+## 📋 Requisitos Funcionais (RF)
+
+### Usuários
+- [ ] RF01: Criar um novo usuário (POST /users)
+  - [ ] Validar dados de entrada (nome, email)
+  - [ ] Gerar UUID único
+  - [ ] Gerar session_id para cookies
+  - [ ] Retornar dados do usuário criado
+
+- [ ] RF02: Identificar usuário entre requisições
+  - [ ] Implementar middleware de autenticação via cookies
+  - [ ] Validar session_id em cada requisição protegida
+  - [ ] Retornar erro 401 se não autenticado
+
+### Refeições
+- [ ] RF03: Registrar uma refeição (POST /meals)
+  - [ ] Validar dados: nome, descrição, data/hora, is_on_diet
+  - [ ] Associar refeição ao usuário autenticado
+  - [ ] Retornar refeição criada
+
+- [ ] RF04: Editar uma refeição (PUT /meals/:id)
+  - [ ] Permitir alterar: nome, descrição, data/hora, is_on_diet
+  - [ ] Verificar se refeição pertence ao usuário
+  - [ ] Retornar erro 404 se não encontrada
+  - [ ] Retornar erro 403 se não autorizado
+
+- [ ] RF05: Apagar uma refeição (DELETE /meals/:id)
+  - [ ] Verificar se refeição pertence ao usuário
+  - [ ] Retornar erro 404 se não encontrada
+  - [ ] Retornar erro 403 se não autorizado
+
+- [ ] RF06: Listar todas as refeições do usuário (GET /meals)
+  - [ ] Retornar apenas refeições do usuário autenticado
+  - [ ] Ordenar por data/hora (mais recente primeiro)
+
+- [ ] RF07: Visualizar uma única refeição (GET /meals/:id)
+  - [ ] Verificar se refeição pertence ao usuário
+  - [ ] Retornar erro 404 se não encontrada
+  - [ ] Retornar erro 403 se não autorizado
+
+### Métricas
+- [ ] RF08: Recuperar métricas do usuário (GET /metrics)
+  - [ ] Total de refeições registradas
+  - [ ] Total de refeições dentro da dieta
+  - [ ] Total de refeições fora da dieta
+  - [ ] Melhor sequência de refeições dentro da dieta
+
+## 🔒 Requisitos Não-Funcionais (RNF)
+
+### Segurança
+- [ ] RNF01: Autenticação via cookies (session_id)
+- [ ] RNF02: Isolamento de dados por usuário
+- [ ] RNF03: Validação de propriedade dos recursos (refeições)
+- [ ] RNF04: Email único por usuário
+
+### Performance
+- [ ] RNF05: Usar índices no banco (session_id, user_id)
+- [ ] RNF06: Consultas otimizadas para métricas
+
+### Validação
+- [ ] RNF07: Validar schemas de entrada com Zod ou similar
+- [ ] RNF08: Retornar erros padronizados (400, 401, 403, 404)
+- [ ] RNF09: Validar formato de UUID
+- [ ] RNF10: Validar formato de email
+
+### Código
+- [ ] RNF11: Organizar código em rotas separadas
+- [ ] RNF12: Criar middlewares reutilizáveis
+- [ ] RNF13: Tipagem completa com TypeScript
+- [ ] RNF14: Tratamento de erros centralizado
+
+## 🎯 Próximos Passos Sugeridos
+
+1. [ ] Implementar validação com Zod
+2. [ ] Criar middleware de autenticação
+3. [ ] Implementar rotas de usuários
+4. [ ] Implementar rotas de refeições (CRUD)
+5. [ ] Implementar rota de métricas
+6. [ ] Adicionar tratamento de erros
+7. [ ] Testar todas as rotas
+8. [ ] Documentar API (opcional: Swagger)
+
+## 📝 Regras de Negócio
+
+- ✅ As refeições devem ser relacionadas a um usuário (FK implementada)
+- ⚠️  O usuário só pode visualizar, editar e apagar as refeições que ele criou (precisa implementar verificação)
+- ⚠️  Usuário deve ser identificado entre requisições (precisa implementar cookies/middleware)
+
