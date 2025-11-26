@@ -2,6 +2,7 @@ import fastify from "fastify";
 import cookie from "@fastify/cookie";
 import { DietRoutes } from "./routes/diet";
 import { UsersRoutes } from "./routes/users";
+import { MetricsRoutes } from "./routes/metrics";
 
 const app = fastify();
 
@@ -15,6 +16,10 @@ app.register(UsersRoutes, {
 
 app.register(DietRoutes, {
   prefix: "/meals",
+});
+
+app.register(MetricsRoutes, {
+  prefix: "/metrics",
 });
 
 app
