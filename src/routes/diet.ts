@@ -26,6 +26,24 @@ export async function DietRoutes(app: FastifyInstance) {
     return meals;
   });
 
+  // RF04: Obter detalhes de uma refeição específica (GET /meals/:mealId)
+  app.get("/:mealId", async (request, reply) => {
+    const IdParamSchema = z.object({
+      mealId: z.string().uuid("ID de refeição inválido"),
+    });
+
+    const { mealId } = IdParamSchema.parse(request.params);
+    const meal = await database("meals")
+      .where({ id: mealId, user_id: request.user!.id })
+      .first();
+
+    if (!meal) {
+      return reply.status(404).send({ message: "Refeição não encontrada." });
+    }
+
+    return meal;
+  });
+
   // RF03: Registrar uma refeição (POST /meals)
   app.post("/", async (request, reply) => {
     const createDietBodySchema = z.object({
@@ -43,7 +61,7 @@ export async function DietRoutes(app: FastifyInstance) {
 
     await database("meals").insert({
       id: mealId,
-      user_id: request.user!.id, 
+      user_id: request.user!.id,
       name,
       description,
       is_on_diet,
@@ -55,6 +73,73 @@ export async function DietRoutes(app: FastifyInstance) {
     return reply.status(201).send({
       meal,
       message: "Refeição cadastrada com sucesso!",
+    });
+  });
+
+  //Schema para atualizar refeição (UpdateMealSchema)
+  app.put("/:mealId", async (request, reply) => {
+    const updateMealsSchema = z.object({
+      name: z.string().min(1, "Nome é obrigatório"),
+      description: z.string().optional(),
+      is_on_diet: z.boolean(),
+      date_time: z.coerce.date().optional(),
+    });
+
+    const { name, description, is_on_diet, date_time } =
+      updateMealsSchema.parse(request.body);
+
+    //verificar se a refeição existe e pertence ao usuário autenticado
+    const getMealParamsSchema = z.object({
+      mealId: z.string().uuid("ID de refeição inválido"),
+    });
+
+    const { mealId } = getMealParamsSchema.parse(request.params);
+
+    const meal = await database("meals")
+      .where({ id: mealId, user_id: request.user!.id })
+      .first();
+
+    if (!meal) {
+      return reply.status(404).send({ message: "Refeição não encontrada." });
+    }
+
+    await database("meals")
+      .where({ id: mealId })
+      .update({
+        name,
+        description,
+        is_on_diet,
+        date_time: date_time?.toISOString() || meal.date_time,
+      });
+
+    const updatedMeal = await database("meals").where({ id: mealId }).first();
+
+    return reply.status(200).send({
+      meal: updatedMeal,
+      message: "Refeição atualizada com sucesso!",
+    });
+  });
+
+  app.delete("/:mealId", async (request, reply) => {
+    //verificar o ID da refeição e se pertence ao usuário autenticado
+    const deleteMealParamsSchema = z.object({
+      mealId: z.string().uuid("ID de refeição inválido"),
+    });
+
+    // depois que verificar o ID da refeição e se pertence ao usuário autenticado eu vou deletar a refeição
+    const { mealId } = deleteMealParamsSchema.parse(request.params);
+    const meal = await database("meals")
+      .where({ id: mealId, user_id: request.user!.id })
+      .first();
+
+    if (!meal) {
+      return reply.status(404).send({ message: "Refeição não encontrada." });
+    }
+
+    await database("meals").where({ id: mealId }).delete();
+
+    return reply.status(200).send({
+      message: "Refeição deletada com sucesso!",
     });
   });
 }

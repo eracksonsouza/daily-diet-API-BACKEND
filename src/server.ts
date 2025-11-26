@@ -14,7 +14,7 @@ app.register(UsersRoutes, {
 });
 
 app.register(DietRoutes, {
-  prefix: "/diet",
+  prefix: "/meals",
 });
 
 app
