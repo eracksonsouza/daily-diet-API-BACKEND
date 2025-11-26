@@ -1,11 +1,20 @@
 import fastify from "fastify";
-import { knex } from "./database";
+import cookie from "@fastify/cookie";
+import { DietRoutes } from "./routes/diet";
+import { UsersRoutes } from "./routes/users";
 
 const app = fastify();
 
-app.get("/hello", async () => {
-  const mealsDiet = await knex("meals").where({ is_on_diet: true });
-  return mealsDiet;
+// Registrar plugin de cookies
+app.register(cookie);
+
+// Registrar rotas
+app.register(UsersRoutes, {
+  prefix: "/users",
+});
+
+app.register(DietRoutes, {
+  prefix: "/diet",
 });
 
 app
