@@ -53,7 +53,7 @@ export async function MetricsRoutes(app: FastifyInstance) {
 
     const { userId } = userIdSchema.parse(request.params);
 
-    // Buscar refeições do usuário especificado
+    // Buscar refeições do usuário especifico ordenadas por data/hora
     const meals = await database("meals")
       .where({ user_id: userId })
       .orderBy("date_time", "asc");
