@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "knex": "node --import tsx ./node_modules/.bin/knex",
-    "prettier": "prettier --write --fix"
+    "prettier": "prettier --write --fix",
+    "test": "NODE_ENV=test vitest run",
+    "test:watch": "NODE_ENV=test vitest",
+    "test:ui": "NODE_ENV=test vitest --ui",
+    "test:setup": "NODE_ENV=test DATABASE_URL=./db/test.db npm run knex -- migrate:latest"
   },
   "keywords": [],
   "author": "",
@@ -14,17 +18,20 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "3": "^2.1.0",
     "@fastify/cookie": "^11.0.2",
+    "@types/supertest": "^6.0.3",
     "dotenv": "^17.2.3",
     "fastify": "^5.6.2",
     "knex": "^3.1.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "vitest": "^4.0.14",
     "zod": "^4.1.13"
   }
 }
