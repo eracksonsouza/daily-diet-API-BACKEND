@@ -8,9 +8,7 @@ export async function UsersRoutes(app: FastifyInstance) {
     return await database("users").select("*");
   });
 
-  // RF01: Criar um novo usuário (POST /users)
   app.post("/", async (request, reply) => {
-    // Validar dados de entrada (nome, email)
     const createUserBodySchema = z.object({
       name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
       email: z.string().email("Email inválido"),
@@ -18,7 +16,6 @@ export async function UsersRoutes(app: FastifyInstance) {
 
     const { name, email } = createUserBodySchema.parse(request.body);
 
-    // Verificar se email já existe (RNF04)
     const existingUser = await database("users").where({ email }).first();
 
     if (existingUser) {
@@ -27,11 +24,9 @@ export async function UsersRoutes(app: FastifyInstance) {
       });
     }
 
-    // Gerar UUID único e session_id
     const userId = randomUUID();
     const sessionId = randomUUID();
 
-    // Criar usuário no banco
     await database("users").insert({
       id: userId,
       name,
@@ -39,15 +34,13 @@ export async function UsersRoutes(app: FastifyInstance) {
       session_id: sessionId,
     });
 
-    // Configurar cookie com session_id (válido por 7 dias)
     reply.cookie("sessionId", sessionId, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 dias em segundos
-      httpOnly: true, // Não acessível via JavaScript (segurança)
-      secure: false, // Mudar para true em produção (HTTPS)
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: true,
+      secure: false,
     });
 
-    // Retornar dados do usuário criado
     return reply.status(201).send({
       user: {
         id: userId,

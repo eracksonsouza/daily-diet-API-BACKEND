@@ -12,7 +12,6 @@ describe("Metrics Routes", () => {
   });
 
   test("The user can obtain meal metrics", async () => {
-    //cria um usuario primeiro
     await request(app.server)
       .post("/users")
       .send({

@@ -1,7 +1,6 @@
 import { config } from "dotenv";
 import { z } from "zod";
 
-// Carrega o arquivo .env correto baseado no NODE_ENV
 if (process.env.NODE_ENV === "test") {
   config({ path: ".env.test" });
 } else {

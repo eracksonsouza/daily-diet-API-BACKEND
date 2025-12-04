@@ -12,7 +12,6 @@ describe("Meals Routes", () => {
   });
 
   test("The user can create a new meal", async () => {
-    //cria um usuario primeiro
     await request(app.server)
       .post("/users")
       .send({
@@ -23,7 +22,6 @@ describe("Meals Routes", () => {
   });
 
   test("The user can list all meals", async () => {
-    //cria um usuario primeiro
     await request(app.server)
       .post("/users")
       .send({
@@ -44,7 +42,6 @@ describe("Meals Routes", () => {
   });
 
   test("The user can delete a meal", async () => {
-    // 1. Create a user first
     const createUserResponse = await request(app.server)
       .post("/users")
       .send({
@@ -53,10 +50,8 @@ describe("Meals Routes", () => {
       })
       .expect(201);
 
-    // 2. Pegar o cookie/sessionId do usuário
     const cookies = createUserResponse.headers["set-cookie"];
 
-    // 3. Criar uma refeição para esse usuário
     const createMealResponse = await request(app.server)
       .post("/meals")
       .set("Cookie", cookies)
@@ -68,10 +63,8 @@ describe("Meals Routes", () => {
       })
       .expect(201);
 
-    // 4. Get the ID of the created meal
     const id_da_refeicao = createMealResponse.body.meal.id;
 
-    // 5. Deletar a refeição
     await request(app.server)
       .delete(`/meals/${id_da_refeicao}`)
       .set("Cookie", cookies)

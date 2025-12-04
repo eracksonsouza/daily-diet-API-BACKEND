@@ -6,10 +6,8 @@ import { UsersRoutes } from "./routes/users";
 
 const app = fastify();
 
-// Registrar plugin de cookies
 app.register(cookie);
 
-// Registrar rotas
 app.register(UsersRoutes, {
   prefix: "/users",
 });

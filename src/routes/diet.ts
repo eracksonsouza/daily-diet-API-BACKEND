@@ -13,20 +13,16 @@ declare module "fastify" {
 }
 
 export async function DietRoutes(app: FastifyInstance) {
-  // Aplicar middleware de autenticação em todas as rotas
   app.addHook("preHandler", checkSessionIdExists);
 
-  // RF06: Listar todas as refeições do usuário (GET /meals)
   app.get("/", async (request) => {
-    // Retornar apenas refeições do usuário autenticado
     const meals = await database("meals")
       .where({ user_id: request.user!.id })
-      .orderBy("date_time", "desc"); // Ordenar por data/hora (mais recente primeiro)
+      .orderBy("date_time", "desc");
 
     return meals;
   });
 
-  // RF04: Obter detalhes de uma refeição específica (GET /meals/:mealId)
   app.get("/:mealId", async (request, reply) => {
     const IdParamSchema = z.object({
       mealId: z.string().uuid("ID de refeição inválido"),
@@ -44,7 +40,6 @@ export async function DietRoutes(app: FastifyInstance) {
     return meal;
   });
 
-  // RF03: Registrar uma refeição (POST /meals)
   app.post("/", async (request, reply) => {
     const createDietBodySchema = z.object({
       name: z.string().min(1, "Nome é obrigatório"),
@@ -56,7 +51,6 @@ export async function DietRoutes(app: FastifyInstance) {
     const { name, description, is_on_diet, date_time } =
       createDietBodySchema.parse(request.body);
 
-    // Associar refeição ao usuário autenticado
     const mealId = randomUUID();
 
     await database("meals").insert({
@@ -76,7 +70,6 @@ export async function DietRoutes(app: FastifyInstance) {
     });
   });
 
-  //Schema para atualizar refeição (UpdateMealSchema)
   app.put("/:mealId", async (request, reply) => {
     const updateMealsSchema = z.object({
       name: z.string().min(1, "Nome é obrigatório"),
@@ -88,7 +81,6 @@ export async function DietRoutes(app: FastifyInstance) {
     const { name, description, is_on_diet, date_time } =
       updateMealsSchema.parse(request.body);
 
-    //verificar se a refeição existe e pertence ao usuário autenticado
     const getMealParamsSchema = z.object({
       mealId: z.string().uuid("ID de refeição inválido"),
     });
@@ -121,12 +113,10 @@ export async function DietRoutes(app: FastifyInstance) {
   });
 
   app.delete("/:mealId", async (request, reply) => {
-    //verificar o ID da refeição e se pertence ao usuário autenticado
     const deleteMealParamsSchema = z.object({
       mealId: z.string().uuid("ID de refeição inválido"),
     });
 
-    // depois que verificar o ID da refeição e se pertence ao usuário autenticado eu vou deletar a refeição
     const { mealId } = deleteMealParamsSchema.parse(request.params);
     const meal = await database("meals")
       .where({ id: mealId, user_id: request.user!.id })

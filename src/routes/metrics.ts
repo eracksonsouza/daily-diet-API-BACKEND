@@ -4,26 +4,19 @@ import { checkSessionIdExists } from "../middlewares/check-session-id-exists";
 import { database } from "../database";
 
 export async function MetricsRoutes(app: FastifyInstance) {
-  // Aplicar middleware de autenticação em todas as rotas
   app.addHook("preHandler", checkSessionIdExists);
 
-  // RF08: Obter métricas das refeições do usuário (GET /metrics)
   app.get("/", async (request) => {
-    // Buscar todas as refeições do usuário autenticado, ordenadas por data/hora
     const meals = await database("meals")
       .where({ user_id: request.user!.id })
-      .orderBy("date_time", "asc"); // Ordenar cronologicamente para calcular sequências
+      .orderBy("date_time", "asc");
 
-    // 1. Total de refeições registradas
     const totalMeals = meals.length;
 
-    // 2. Total de refeições dentro da dieta
     const mealsOnDiet = meals.filter((meal) => meal.is_on_diet === 1).length;
 
-    // 3. Total de refeições fora da dieta
     const mealsOffDiet = meals.filter((meal) => meal.is_on_diet === 0).length;
 
-    // 4. Melhor sequência de refeições dentro da dieta
     let bestSequence = 0;
     let currentSequence = 0;
 
@@ -34,7 +27,7 @@ export async function MetricsRoutes(app: FastifyInstance) {
           bestSequence = currentSequence;
         }
       } else {
-        currentSequence = 0; // Reseta a sequência quando encontra uma refeição fora da dieta
+        currentSequence = 0;
       }
     }
 
@@ -53,7 +46,6 @@ export async function MetricsRoutes(app: FastifyInstance) {
 
     const { userId } = userIdSchema.parse(request.params);
 
-    // Buscar refeições do usuário especifico ordenadas por data/hora
     const meals = await database("meals")
       .where({ user_id: userId })
       .orderBy("date_time", "asc");
@@ -64,7 +56,6 @@ export async function MetricsRoutes(app: FastifyInstance) {
       });
     }
 
-    // Cálculos das métricas...
     const totalMeals = meals.length;
     const mealsOnDiet = meals.filter((meal) => meal.is_on_diet === 1).length;
     const mealsOffDiet = meals.filter((meal) => meal.is_on_diet === 0).length;

@@ -3,7 +3,6 @@ import request from "supertest";
 import { app } from "../app";
 
 describe("Users Routes", () => {
-  //antes de todos os testes eu preciso garantir que o app esteja pronto
   beforeAll(async () => {
     await app.ready();
   });
